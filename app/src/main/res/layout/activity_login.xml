@@ -36,15 +36,40 @@
                 android:id="@+id/imageView2"
                 android:layout_width="match_parent"
                 android:layout_height="169dp"
-                app:srcCompat="@mipmap/ic_launcher_foreground" />
+                app:srcCompat="@mipmap/jamie_1_round" />
+
+            <TextView
+                android:id="@+id/step1View"
+                android:layout_marginTop="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/login_step1_title"
+                android:textSize="@dimen/step_text_size"/>
 
             <Button
-                android:id="@+id/email_sign_in_button"
+                android:id="@+id/ndi_login_button"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/action_sign_in"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/step2View"
+                android:layout_marginTop="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/login_step2_title"
+                android:textSize="@dimen/step_text_size"/>
+
+            <Button
+                android:id="@+id/va_enrollment_button"
+                style="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/action_enroll"
                 android:textStyle="bold" />
 
             <android.support.design.widget.TextInputLayout
