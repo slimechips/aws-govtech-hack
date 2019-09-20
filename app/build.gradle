@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.amazonaws.appsync'
 
 android {
     compileSdkVersion 28
@@ -9,6 +10,7 @@ android {
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -28,4 +30,15 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation 'com.android.support:multidex:1.0.3'
+
+    //Base SDK
+    implementation 'com.amazonaws:aws-android-sdk-core:2.15.+'
+    //AppSync SDK
+    implementation 'com.amazonaws:aws-android-sdk-appsync:2.8.+'
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
+    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+    def aws_version = "2.15.+"
+    implementation ("com.amazonaws:aws-android-sdk-lex:$aws_version@aar") { transitive=true }
+    implementation ("com.amazonaws:aws-android-sdk-mobile-client:$aws_version@aar") { transitive=true }
 }
