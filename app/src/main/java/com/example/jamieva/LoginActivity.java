@@ -1,5 +1,6 @@
 package com.example.jamieva;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -7,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -20,15 +22,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +43,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int REQUEST_READ_CONTACTS = 0;
+    private static final int REQUEST_RECORDING_PERMISSIONS_RESULT = 75;
 
     /**
      * A dummy authentication store containing known user names and passwords.
@@ -56,11 +56,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private UserLoginTask mAuthTask = null;
+    private static final String TAG = "LoginActivity";
 
     // UI references.
     private View mProgressView;
     private View mLoginFormView;
+    private Button ndiLoginButton;
     private Button enrollmentButton;
+    private Button startButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,10 +72,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // Set up the login form.
         populateAutoComplete();
 
-
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        ndiLoginButton = findViewById(R.id.ndi_login_button);
         enrollmentButton = findViewById(R.id.va_enrollment_button);
+        startButton = findViewById(R.id.start_button);
+
+        ndiLoginButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         enrollmentButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -81,6 +93,29 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
+        startButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToStart(v);
+            }
+        });
+
+        // Starting with Marshmallow we need to explicitly ask if we can record audio
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) ==
+                    PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "onCreate: Permission Granted for voice");
+            } else {
+                requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_RECORDING_PERMISSIONS_RESULT);
+            }
+        } else {
+            Log.d(TAG, "onCreate: Permission Granted for voice");
+        }
+    }
+
+    private void goToNdiLogin(View v) {
+//        Intent intent = new Intent(this, NDILogin.class);
+//        startActivity(intent);
     }
 
     private void goToEnrollVoice(View v) {
@@ -88,6 +123,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         startActivity(intent);
     }
 
+    private void goToStart(View v) {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
 
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
@@ -130,36 +170,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
-
-        boolean cancel = false;
-        View focusView = null;
-
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            focusView.requestFocus();
-        } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgress(true);
-            mAuthTask.execute((Void) null);
-        }
-    }
-
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
-    }
-
-    private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
-    }
-
     /**
      * Shows the progress UI and hides the login form.
      */

@@ -6,4 +6,5 @@
     <dimen name="nav_header_height">176dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="step_text_size">26sp</dimen>
+    <dimen name="activity_inter_group_separation">30dp</dimen>
 </resources>

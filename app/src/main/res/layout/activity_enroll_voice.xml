@@ -11,7 +11,17 @@
         layout="@layout/voice_component"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_centerHorizontal="true" />
+        android:layout_above="@+id/space_interactive_voice_component"
+        android:layout_marginBottom="1dp"
+        android:layout_centerHorizontal="true"/>
+
+    <Space
+        android:id="@+id/space_interactive_voice_component"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/activity_inter_group_separation"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,16 +37,26 @@
             android:textAlignment="textEnd"
             android:layout_gravity="end"
             android:textColor="@color/colorPrimary"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
             android:textStyle="bold" />
 
         <TextView
-            android:text="Transcript Placeholder"
             android:id="@+id/transcriptTextView"
+            android:layout_width="327dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="Transcript Placeholder"
+            android:textAlignment="textEnd"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:textColor="@color/colorPrimary" />
+
+        <ImageView
+            android:id="@+id/imageView3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAlignment="textEnd"
-            android:layout_gravity="end"
-            android:textColor="@color/colorPrimary"/>
+            android:src="@mipmap/ic_launcher_foreground" />
 
         <TextView
             android:text="Response as text:"
@@ -44,6 +64,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:textColor="@color/colorPrimary"
             android:textStyle="bold" />
 
@@ -51,6 +73,8 @@
             android:text="Response Placeholder"
             android:id="@+id/responseTextView"
             android:layout_width="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:layout_height="wrap_content"
             android:textColor="@color/colorPrimary"/>
     </LinearLayout>

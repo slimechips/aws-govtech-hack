@@ -15,6 +15,7 @@ import com.amazonaws.mobileconnectors.lex.interactionkit.ui.InteractiveVoiceView
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -73,6 +74,9 @@ public class EnrollVoice extends Activity
                 Log.d(TAG, lexInteractionConfig.toString());
                 voiceView.getViewAdapter().setInteractionConfig(lexInteractionConfig);
                 voiceView.getViewAdapter().setAwsRegion(botRegion);
+                voiceView.getViewAdapter().setSessionAttributes(new HashMap<String, String>(){{
+                    put("id", "slimechips12");
+                }});
             }
 
             @Override

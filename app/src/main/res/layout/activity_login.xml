@@ -72,6 +72,23 @@
                 android:text="@string/action_enroll"
                 android:textStyle="bold" />
 
+            <TextView
+                android:id="@+id/step3View"
+                android:layout_marginTop="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/login_step3_title"
+                android:textSize="@dimen/step_text_size"/>
+
+            <Button
+                android:id="@+id/start_button"
+                style="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/action_start"
+                android:textStyle="bold" />
+
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
