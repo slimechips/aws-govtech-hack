@@ -28,8 +28,20 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -57,6 +69,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     private UserLoginTask mAuthTask = null;
     private static final String TAG = "LoginActivity";
+    private static String deepLinkUrl;
+    private RequestQueue queue;
 
     // UI references.
     private View mProgressView;
@@ -65,12 +79,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private Button enrollmentButton;
     private Button startButton;
 
+    public static String ndiId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.
         populateAutoComplete();
+
+        queue = Volley.newRequestQueue(this);
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
@@ -79,12 +97,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         enrollmentButton = findViewById(R.id.va_enrollment_button);
         startButton = findViewById(R.id.start_button);
 
-        ndiLoginButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
+        getNdiLogin();
 
         enrollmentButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -113,9 +126,54 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
-    private void goToNdiLogin(View v) {
-//        Intent intent = new Intent(this, NDILogin.class);
-//        startActivity(intent);
+    private void getNdiLogin() {
+        String apiUrl = getString(R.string.ndi_backend_url) + "/main/deeplink";
+        Log.d(TAG, "getNdiLogin: test123");
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET, apiUrl, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d(TAG, "onResponse: test124");
+                HashMap<String, Object> res = new Gson().fromJson(response.toString(), HashMap.class);
+                final String deepLinkUrl = (String) res.get("qr_uri");
+                ndiLoginButton.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        goToNdiLogin(v, deepLinkUrl);
+                    }
+                });
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "onErrorResponse: Error Getting DeepLink uri");
+                Log.e(TAG, error.toString());
+            }
+        });
+
+        queue.add(jsonObjectRequest);
+    }
+
+    private void goToNdiLogin(View v, String deepLinkUrl) {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+            (Request.Method.GET, deepLinkUrl, null, new Response.Listener<JSONObject>() {
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    HashMap<String, Object> res = new Gson().fromJson(response.toString(), HashMap.class);
+                    LoginActivity.ndiId = (String) res.get("ndi_id");
+                }
+            }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    // TODO: Handle error
+
+                }
+            });
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(deepLinkUrl));
+        startActivity(browserIntent);
     }
 
     private void goToEnrollVoice(View v) {

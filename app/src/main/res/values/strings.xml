@@ -3,6 +3,9 @@
 
     <string name="identity_id_test">ac0d20b8-841f-46ec-8fe4-d90b2c738711</string>
     <string name="aws_region">us-east-1</string>
+    <!-- API URLS -->
+    <string name="ndi_backend_url">http://ec2-35-170-55-245.compute-1.amazonaws.com:3030</string>
+
     <!-- Strings related to login -->
     <string name="login_step1_title">Step 1: NDI Login</string>
     <string name="login_step2_title">Step 2: Voice Enrollment</string>

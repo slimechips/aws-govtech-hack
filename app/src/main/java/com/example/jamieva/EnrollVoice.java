@@ -75,8 +75,9 @@ public class EnrollVoice extends Activity
                 voiceView.getViewAdapter().setInteractionConfig(lexInteractionConfig);
                 voiceView.getViewAdapter().setAwsRegion(botRegion);
                 voiceView.getViewAdapter().setSessionAttributes(new HashMap<String, String>(){{
-                    put("id", "slimechips12");
+                    put("id", LoginActivity.ndiId);
                 }});
+
             }
 
             @Override
