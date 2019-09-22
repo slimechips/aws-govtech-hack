@@ -40,6 +40,15 @@ public class EnrollVoice extends Activity
         exit();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart: adsf" + LoginActivity.ndiId);
+        voiceView.getViewAdapter().setSessionAttributes(new HashMap<String, String>() {{
+            put("id", LoginActivity.ndiId);
+        }});
+    }
+
     private void init() {
         voiceView = findViewById(R.id.voiceInterface);
         voiceView.setInteractiveVoiceListener(this);
@@ -74,9 +83,6 @@ public class EnrollVoice extends Activity
                 Log.d(TAG, lexInteractionConfig.toString());
                 voiceView.getViewAdapter().setInteractionConfig(lexInteractionConfig);
                 voiceView.getViewAdapter().setAwsRegion(botRegion);
-                voiceView.getViewAdapter().setSessionAttributes(new HashMap<String, String>(){{
-                    put("id", LoginActivity.ndiId);
-                }});
 
             }
 

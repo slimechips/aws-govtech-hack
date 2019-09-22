@@ -28,10 +28,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
+import com.android.volley.*;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -67,6 +64,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
+
+    private final int MY_SOCKET_TIMEOUT_MS = 60000;
     private UserLoginTask mAuthTask = null;
     private static final String TAG = "LoginActivity";
     private static String deepLinkUrl;
@@ -137,10 +136,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 Log.d(TAG, "onResponse: test124");
                 HashMap<String, Object> res = new Gson().fromJson(response.toString(), HashMap.class);
                 final String deepLinkUrl = (String) res.get("qr_uri");
+                final String authReqId = (String) res.get("auth_req_id");
                 ndiLoginButton.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        goToNdiLogin(v, deepLinkUrl);
+                        goToNdiLogin(v, deepLinkUrl, authReqId);
                     }
                 });
             }
@@ -155,25 +155,35 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         queue.add(jsonObjectRequest);
     }
 
-    private void goToNdiLogin(View v, String deepLinkUrl) {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-            (Request.Method.GET, deepLinkUrl, null, new Response.Listener<JSONObject>() {
-
-                @Override
-                public void onResponse(JSONObject response) {
-                    HashMap<String, Object> res = new Gson().fromJson(response.toString(), HashMap.class);
-                    LoginActivity.ndiId = (String) res.get("ndi_id");
-                }
-            }, new Response.ErrorListener() {
-
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    // TODO: Handle error
-
-                }
-            });
+    private void goToNdiLogin(View v, String deepLinkUrl, String authReqId) {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(deepLinkUrl));
         startActivity(browserIntent);
+        pollNdiLogin(authReqId);
+    }
+
+    private void pollNdiLogin(String authReqId) {
+        String apiUrl = getString(R.string.ndi_backend_url) + "/main/loginpoll" + "?auth_req_id=" + authReqId;
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, apiUrl, null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        HashMap<String, Object> res = new Gson().fromJson(response.toString(), HashMap.class);
+                        Log.d(TAG, "onResponse: received poll response");
+                        LoginActivity.ndiId = (String) res.get("login_hint");
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO: Handle error
+                    }
+                });
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
+                MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(jsonObjectRequest);
     }
 
     private void goToEnrollVoice(View v) {
